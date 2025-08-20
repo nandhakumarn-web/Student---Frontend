@@ -4,7 +4,7 @@ import { AttendanceCreate } from '../models/attendance-create';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../models/api-response';
 import { Attendance } from '../models/attendance';
-import { AttendanceStats } from '../models/attendance-status';
+import { AttendanceStats } from '../models/attendance-stats';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +18,11 @@ export class AttendanceService {
   markAttendance(attendance: AttendanceCreate, teacherId: number): Observable<ApiResponse<Attendance>> {
     const params = new HttpParams().set('teacherId', teacherId.toString());
     return this.http.post<ApiResponse<Attendance>>(`${this.apiUrl}/mark`, attendance, { params });
+  }
+
+  markBulkAttendance(bulkAttendance: any, teacherId: number): Observable<ApiResponse<Attendance[]>> {
+    const params = new HttpParams().set('teacherId', teacherId.toString());
+    return this.http.post<ApiResponse<Attendance[]>>(`${this.apiUrl}/bulk`, bulkAttendance, { params });
   }
 
   getStudentAttendance(studentId: number): Observable<ApiResponse<Attendance[]>> {
