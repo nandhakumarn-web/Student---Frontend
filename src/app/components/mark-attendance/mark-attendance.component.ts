@@ -11,10 +11,12 @@ import { NavbarComponent } from "../navbar/navbar.component";
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserService } from '../../services/user.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-mark-attendance',
-  imports: [NavbarComponent, CommonModule, FormsModule, ReactiveFormsModule],
+  standalone: true,
+  imports: [NavbarComponent, CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
   template: `
     <app-navbar></app-navbar>
     
@@ -38,210 +40,208 @@ import { UserService } from '../../services/user.service';
               <h5 class="mb-0">Attendance Details</h5>
             </div>
             <div class="card-body">
-              <form [formGroup]="attendanceForm" (ngSubmit)="markAttendance()">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="attendanceDate" class="form-label">Date</label>
+                  <input
+                    type="date"
+                    class="form-control"
+                    id="attendanceDate"
+                    [value]="selectedDate"
+                    (change)="onDateChange($event)"
+                    [class.is-invalid]="!selectedDate"
+                  >
+                  <div class="invalid-feedback">Date is required.</div>
+                </div>
+                
+                <div class="col-md-6">
+                  <label for="subject" class="form-label">Subject</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="subject"
+                    [(ngModel)]="selectedSubject"
+                    placeholder="Enter subject name"
+                    [class.is-invalid]="!selectedSubject"
+                  >
+                  <div class="invalid-feedback">Subject is required.</div>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Attendance Mode</label>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="attendanceMode"
+                    id="individual"
+                    value="individual"
+                    [(ngModel)]="attendanceMode"
+                  >
+                  <label class="form-check-label" for="individual">
+                    Individual Student
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="attendanceMode"
+                    id="bulk"
+                    value="bulk"
+                    [(ngModel)]="attendanceMode"
+                  >
+                  <label class="form-check-label" for="bulk">
+                    Bulk (Multiple Students)
+                  </label>
+                </div>
+              </div>
+
+              <!-- Individual Mode -->
+              <div *ngIf="attendanceMode === 'individual'" class="mb-4">
                 <div class="row mb-3">
                   <div class="col-md-6">
-                    <label for="attendanceDate" class="form-label">Date</label>
-                    <input
-                      type="date"
-                      class="form-control"
-                      id="attendanceDate"
-                      formControlName="attendanceDate"
-                      [class.is-invalid]="attendanceForm.get('attendanceDate')?.invalid && attendanceForm.get('attendanceDate')?.touched"
+                    <label for="studentId" class="form-label">Select Student</label>
+                    <select
+                      class="form-select"
+                      id="studentId"
+                      [(ngModel)]="selectedStudentId"
+                      [class.is-invalid]="!selectedStudentId"
                     >
-                    <div class="invalid-feedback">Date is required.</div>
+                      <option value="">Choose student...</option>
+                      <option [value]="student.id" *ngFor="let student of students">
+                        {{ student.firstName }} {{ student.lastName }} ({{ student.studentId }})
+                      </option>
+                    </select>
+                    <div class="invalid-feedback">Please select a student.</div>
                   </div>
                   
                   <div class="col-md-6">
-                    <label for="subject" class="form-label">Subject</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="subject"
-                      formControlName="subject"
-                      placeholder="Enter subject name"
-                      [class.is-invalid]="attendanceForm.get('subject')?.invalid && attendanceForm.get('subject')?.touched"
+                    <label for="status" class="form-label">Status</label>
+                    <select
+                      class="form-select"
+                      id="status"
+                      [(ngModel)]="selectedStatus"
+                      [class.is-invalid]="!selectedStatus"
                     >
-                    <div class="invalid-feedback">Subject is required.</div>
+                      <option value="">Select status...</option>
+                      <option value="PRESENT">Present</option>
+                      <option value="ABSENT">Absent</option>
+                      <option value="LATE">Late</option>
+                    </select>
+                    <div class="invalid-feedback">Please select attendance status.</div>
                   </div>
                 </div>
 
                 <div class="mb-3">
-                  <label class="form-label">Attendance Mode</label>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="radio"
-                      name="attendanceMode"
-                      id="individual"
-                      value="individual"
-                      [(ngModel)]="attendanceMode"
-                      [ngModelOptions]="{standalone: true}"
-                    >
-                    <label class="form-check-label" for="individual">
-                      Individual Student
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="radio"
-                      name="attendanceMode"
-                      id="bulk"
-                      value="bulk"
-                      [(ngModel)]="attendanceMode"
-                      [ngModelOptions]="{standalone: true}"
-                    >
-                    <label class="form-check-label" for="bulk">
-                      Bulk (Multiple Students)
-                    </label>
-                  </div>
+                  <label for="remarks" class="form-label">Remarks (Optional)</label>
+                  <textarea
+                    class="form-control"
+                    id="remarks"
+                    rows="2"
+                    [(ngModel)]="selectedRemarks"
+                    placeholder="Any additional notes..."
+                  ></textarea>
                 </div>
 
-                <!-- Individual Mode -->
-                <div *ngIf="attendanceMode === 'individual'" class="mb-4">
-                  <div class="row mb-3">
-                    <div class="col-md-6">
-                      <label for="studentId" class="form-label">Select Student</label>
-                      <select
-                        class="form-select"
-                        id="studentId"
-                        formControlName="studentId"
-                        [class.is-invalid]="attendanceForm.get('studentId')?.invalid && attendanceForm.get('studentId')?.touched"
-                      >
-                        <option value="">Choose student...</option>
-                        <option [value]="student.id" *ngFor="let student of students">
-                          {{ student.firstName }} {{ student.lastName }} ({{ student.studentId }})
-                        </option>
-                      </select>
-                      <div class="invalid-feedback">Please select a student.</div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                      <label for="status" class="form-label">Status</label>
-                      <select
-                        class="form-select"
-                        id="status"
-                        formControlName="status"
-                        [class.is-invalid]="attendanceForm.get('status')?.invalid && attendanceForm.get('status')?.touched"
-                      >
-                        <option value="">Select status...</option>
-                        <option value="PRESENT">Present</option>
-                        <option value="ABSENT">Absent</option>
-                        <option value="LATE">Late</option>
-                      </select>
-                      <div class="invalid-feedback">Please select attendance status.</div>
-                    </div>
-                  </div>
+                <button 
+                  type="button" 
+                  class="btn btn-primary"
+                  (click)="markIndividualAttendance()"
+                  [disabled]="!canSubmitIndividual() || isSubmitting"
+                >
+                  <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
+                  {{ isSubmitting ? 'Marking...' : 'Mark Attendance' }}
+                </button>
+              </div>
 
-                  <div class="mb-3">
-                    <label for="remarks" class="form-label">Remarks (Optional)</label>
-                    <textarea
-                      class="form-control"
-                      id="remarks"
-                      rows="2"
-                      formControlName="remarks"
-                      placeholder="Any additional notes..."
-                    ></textarea>
-                  </div>
-
-                  <button 
-                    type="submit" 
-                    class="btn btn-primary"
-                    [disabled]="attendanceForm.invalid || isSubmitting"
-                  >
-                    <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
-                    {{ isSubmitting ? 'Marking...' : 'Mark Attendance' }}
-                  </button>
-                </div>
-
-                <!-- Bulk Mode -->
-                <div *ngIf="attendanceMode === 'bulk'" class="mb-4">
-                  <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6>Student List</h6>
-                    <div class="btn-group btn-group-sm">
-                      <button type="button" class="btn btn-outline-success" (click)="markAllPresent()">
-                        All Present
-                      </button>
-                      <button type="button" class="btn btn-outline-danger" (click)="markAllAbsent()">
-                        All Absent
-                      </button>
-                    </div>
-                  </div>
-
-                  <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-                    <table class="table table-hover table-sm">
-                      <thead class="table-light sticky-top">
-                        <tr>
-                          <th>Student ID</th>
-                          <th>Student Name</th>
-                          <th>Present</th>
-                          <th>Absent</th>
-                          <th>Late</th>
-                          <th>Remarks</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let student of students; let i = index">
-                          <td>{{ student.studentId }}</td>
-                          <td>{{ student.firstName }} {{ student.lastName }}</td>
-                          <td>
-                            <input
-                              type="radio"
-                              class="form-check-input"
-                              [name]="'status_' + student.id"
-                              value="PRESENT"
-                              [(ngModel)]="bulkAttendance[student.id]?.status"
-                              [ngModelOptions]="{standalone: true}"
-                            >
-                          </td>
-                          <td>
-                            <input
-                              type="radio"
-                              class="form-check-input"
-                              [name]="'status_' + student.id"
-                              value="ABSENT"
-                              [(ngModel)]="bulkAttendance[student.id]?.status"
-                              [ngModelOptions]="{standalone: true}"
-                            >
-                          </td>
-                          <td>
-                            <input
-                              type="radio"
-                              class="form-check-input"
-                              [name]="'status_' + student.id"
-                              value="LATE"
-                              [(ngModel)]="bulkAttendance[student.id]?.status"
-                              [ngModelOptions]="{standalone: true}"
-                            >
-                          </td>
-                          <td>
-                            <input
-                              type="text"
-                              class="form-control form-control-sm"
-                              [(ngModel)]="bulkAttendance[student.id]?.remarks"
-                              [ngModelOptions]="{standalone: true}"
-                              placeholder="Remarks..."
-                            >
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <div class="mt-3">
-                    <button 
-                      type="button" 
-                      class="btn btn-primary"
-                      (click)="markBulkAttendance()"
-                      [disabled]="!canSubmitBulk() || isSubmitting"
-                    >
-                      <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
-                      {{ isSubmitting ? 'Marking...' : 'Mark Bulk Attendance' }}
+              <!-- Bulk Mode -->
+              <div *ngIf="attendanceMode === 'bulk'" class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h6>Student List</h6>
+                  <div class="btn-group btn-group-sm">
+                    <button type="button" class="btn btn-outline-success" (click)="markAllPresent()">
+                      All Present
+                    </button>
+                    <button type="button" class="btn btn-outline-danger" (click)="markAllAbsent()">
+                      All Absent
                     </button>
                   </div>
                 </div>
-              </form>
+
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                  <table class="table table-hover table-sm">
+                    <thead class="table-light sticky-top">
+                      <tr>
+                        <th>Student ID</th>
+                        <th>Student Name</th>
+                        <th>Present</th>
+                        <th>Absent</th>
+                        <th>Late</th>
+                        <th>Remarks</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let student of students; let i = index">
+                        <td>{{ student.studentId }}</td>
+                        <td>{{ student.firstName }} {{ student.lastName }}</td>
+                        <td>
+                          <input
+                            type="radio"
+                            class="form-check-input"
+                            [name]="'status_' + student.id"
+                            value="PRESENT"
+                            [checked]="getBulkStatus(student.id) === 'PRESENT'"
+                            (change)="setBulkStatus(student.id, 'PRESENT')"
+                          >
+                        </td>
+                        <td>
+                          <input
+                            type="radio"
+                            class="form-check-input"
+                            [name]="'status_' + student.id"
+                            value="ABSENT"
+                            [checked]="getBulkStatus(student.id) === 'ABSENT'"
+                            (change)="setBulkStatus(student.id, 'ABSENT')"
+                          >
+                        </td>
+                        <td>
+                          <input
+                            type="radio"
+                            class="form-check-input"
+                            [name]="'status_' + student.id"
+                            value="LATE"
+                            [checked]="getBulkStatus(student.id) === 'LATE'"
+                            (change)="setBulkStatus(student.id, 'LATE')"
+                          >
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            class="form-control form-control-sm"
+                            [value]="getBulkRemarks(student.id)"
+                            (input)="setBulkRemarks(student.id, $event)"
+                            placeholder="Remarks..."
+                          >
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="mt-3">
+                  <button 
+                    type="button" 
+                    class="btn btn-primary"
+                    (click)="markBulkAttendance()"
+                    [disabled]="!canSubmitBulk() || isSubmitting"
+                  >
+                    <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
+                    {{ isSubmitting ? 'Marking...' : 'Mark Bulk Attendance' }}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -354,12 +354,18 @@ import { UserService } from '../../services/user.service';
   `]
 })
 export class MarkAttendanceComponent implements OnInit {
-  attendanceForm: FormGroup;
   students: User[] = [];
   recentAttendance: any[] = [];
   attendanceMode: 'individual' | 'bulk' = 'individual';
   bulkAttendance: { [key: number]: { status: AttendanceStatus; remarks: string } } = {};
   isSubmitting = false;
+
+  // Form fields
+  selectedDate = this.getCurrentDateString();
+  selectedSubject = '';
+  selectedStudentId = '';
+  selectedStatus = '';
+  selectedRemarks = '';
 
   constructor(
     private fb: FormBuilder,
@@ -367,27 +373,23 @@ export class MarkAttendanceComponent implements OnInit {
     private userService: UserService,
     private authService: AauthService,
     private router: Router
-  ) {
-    this.attendanceForm = this.fb.group({
-      attendanceDate: [this.getCurrentDateString(), Validators.required],
-      subject: ['', Validators.required],
-      studentId: ['', Validators.required],
-      status: ['', Validators.required],
-      remarks: ['']
-    });
-  }
+  ) {}
 
   ngOnInit(): void {
     this.loadStudents();
     this.loadRecentAttendance();
-    this.initializeBulkAttendance();
   }
 
   loadStudents(): void {
-    this.userService.getUsersByRole(UserRole.STUDENT).subscribe(response => {
-      if (response.success) {
-        this.students = response.data;
-        this.initializeBulkAttendance();
+    this.userService.getUsersByRole(UserRole.STUDENT).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.students = response.data;
+          this.initializeBulkAttendance();
+        }
+      },
+      error: (error) => {
+        console.error('Error loading students:', error);
       }
     });
   }
@@ -396,9 +398,14 @@ export class MarkAttendanceComponent implements OnInit {
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser) return;
 
-    this.attendanceService.getAttendanceByTeacher(currentUser.id).subscribe(response => {
-      if (response.success) {
-        this.recentAttendance = response.data;
+    this.attendanceService.getAttendanceByTeacher(currentUser.id).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.recentAttendance = response.data;
+        }
+      },
+      error: (error) => {
+        console.error('Error loading recent attendance:', error);
       }
     });
   }
@@ -421,6 +428,32 @@ export class MarkAttendanceComponent implements OnInit {
     return new Date().toLocaleDateString();
   }
 
+  onDateChange(event: any): void {
+    this.selectedDate = event.target.value;
+  }
+
+  getBulkStatus(studentId: number): AttendanceStatus {
+    return this.bulkAttendance[studentId]?.status || AttendanceStatus.PRESENT;
+  }
+
+  setBulkStatus(studentId: number, status: string): void {
+    if (!this.bulkAttendance[studentId]) {
+      this.bulkAttendance[studentId] = { status: AttendanceStatus.PRESENT, remarks: '' };
+    }
+    this.bulkAttendance[studentId].status = status as AttendanceStatus;
+  }
+
+  getBulkRemarks(studentId: number): string {
+    return this.bulkAttendance[studentId]?.remarks || '';
+  }
+
+  setBulkRemarks(studentId: number, event: any): void {
+    if (!this.bulkAttendance[studentId]) {
+      this.bulkAttendance[studentId] = { status: AttendanceStatus.PRESENT, remarks: '' };
+    }
+    this.bulkAttendance[studentId].remarks = event.target.value;
+  }
+
   markAllPresent(): void {
     this.students.forEach(student => {
       this.bulkAttendance[student.id].status = AttendanceStatus.PRESENT;
@@ -437,45 +470,47 @@ export class MarkAttendanceComponent implements OnInit {
     return Object.values(this.bulkAttendance).filter(att => att.status === status).length;
   }
 
-  canSubmitBulk(): boolean {
-    return Object.keys(this.bulkAttendance).length > 0 && 
-           this.attendanceForm.get('subject')?.valid && 
-           this.attendanceForm.get('attendanceDate')?.valid;
+  canSubmitIndividual(): boolean {
+    return !!(this.selectedDate && this.selectedSubject && this.selectedStudentId && this.selectedStatus);
   }
 
-  markAttendance(): void {
-    if (this.attendanceForm.valid) {
-      const currentUser = this.authService.getCurrentUser();
-      if (!currentUser) return;
+  canSubmitBulk(): boolean {
+    return !!(this.selectedDate && this.selectedSubject && Object.keys(this.bulkAttendance).length > 0);
+  }
 
-      this.isSubmitting = true;
-      const attendanceData: AttendanceCreate = {
-        studentId: this.attendanceForm.value.studentId,
-        subject: this.attendanceForm.value.subject,
-        attendanceDate: new Date(this.attendanceForm.value.attendanceDate),
-        status: this.attendanceForm.value.status,
-        remarks: this.attendanceForm.value.remarks
-      };
+  markIndividualAttendance(): void {
+    if (!this.canSubmitIndividual()) return;
 
-      this.attendanceService.markAttendance(attendanceData, currentUser.id).subscribe({
-        next: (response) => {
-          this.isSubmitting = false;
-          if (response.success) {
-            this.attendanceForm.reset({
-              attendanceDate: this.getCurrentDateString(),
-              subject: this.attendanceForm.value.subject // Keep subject
-            });
-            this.loadRecentAttendance();
-            alert('Attendance marked successfully!');
-          }
-        },
-        error: (error) => {
-          this.isSubmitting = false;
-          console.error('Error marking attendance:', error);
-          alert('Error marking attendance. Please try again.');
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) return;
+
+    this.isSubmitting = true;
+    const attendanceData: AttendanceCreate = {
+      studentId: parseInt(this.selectedStudentId),
+      subject: this.selectedSubject,
+      attendanceDate: new Date(this.selectedDate),
+      status: this.selectedStatus as AttendanceStatus,
+      remarks: this.selectedRemarks
+    };
+
+    this.attendanceService.markAttendance(attendanceData, currentUser.id).subscribe({
+      next: (response) => {
+        this.isSubmitting = false;
+        if (response.success) {
+          // Reset form
+          this.selectedStudentId = '';
+          this.selectedStatus = '';
+          this.selectedRemarks = '';
+          this.loadRecentAttendance();
+          alert('Attendance marked successfully!');
         }
-      });
-    }
+      },
+      error: (error) => {
+        this.isSubmitting = false;
+        console.error('Error marking attendance:', error);
+        alert('Error marking attendance. Please try again.');
+      }
+    });
   }
 
   markBulkAttendance(): void {
@@ -493,8 +528,8 @@ export class MarkAttendanceComponent implements OnInit {
     }));
 
     const bulkData = {
-      attendanceDate: new Date(this.attendanceForm.value.attendanceDate),
-      subject: this.attendanceForm.value.subject,
+      attendanceDate: new Date(this.selectedDate),
+      subject: this.selectedSubject,
       attendanceRecords
     };
 
