@@ -15,6 +15,12 @@ export class QuizService {
 
   constructor(private http: HttpClient) {}
 
+  // Create a new quiz
+  createQuiz(quizData: any, teacherId: number): Observable<ApiResponse<Quiz>> {
+    const params = new HttpParams().set('teacherId', teacherId.toString());
+    return this.http.post<ApiResponse<Quiz>>(`${this.apiUrl}/create`, quizData, { params });
+  }
+
   getAllActiveQuizzes(): Observable<ApiResponse<Quiz[]>> {
     return this.http.get<ApiResponse<Quiz[]>>(`${this.apiUrl}/all`);
   }
