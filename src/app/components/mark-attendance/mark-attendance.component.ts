@@ -5,12 +5,12 @@ import { User } from '../../models/user';
 import { AttendanceCreate } from '../../models/attendance-create';
 import { AttendanceStatus } from '../../models/attendance-status';
 import { AttendanceService } from '../../services/attendance.service';
-import { UserService } from '../../services/user.service';
 import { AauthService } from '../../services/auth.service';
 import { UserRole } from '../../models/user-role';
 import { NavbarComponent } from "../navbar/navbar.component";
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-mark-attendance',
