@@ -16,7 +16,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [ReactiveFormsModule, FormsModule, CommonModule, RouterModule],
   template: `
-    <div class="container-fluid py-5 overflow-hidden w-100">
+    <div class="container-fluid py-5 overflow-hidden vh-100">
       <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
           <div class="card shadow-lg border-0">
