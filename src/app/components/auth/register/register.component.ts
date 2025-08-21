@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-register',
-  standalone: true, 
+  standalone: true,
   imports: [ReactiveFormsModule, FormsModule, CommonModule],
   template: `
     <div class="container-fluid py-5">
@@ -160,15 +160,15 @@ import { CommonModule } from '@angular/common';
                         id="semester"
                         formControlName="semester"
                       >
-                        <option value="">Select Semester</option>
-                        <option value="1">1st Semester</option>
-                        <option value="2">2nd Semester</option>
-                        <option value="3">3rd Semester</option>
-                        <option value="4">4th Semester</option>
-                        <option value="5">5th Semester</option>
-                        <option value="6">6th Semester</option>
-                        <option value="7">7th Semester</option>
-                        <option value="8">8th Semester</option>
+                        <option value="">Select Batch</option>
+                        <option value="1">1st Batch</option>
+                        <option value="2">2nd Batch</option>
+                        <option value="3">3rd Batch</option>
+                        <option value="4">4th Batch</option>
+                        <option value="5">5th Batch</option>
+                        <option value="6">6th Batch</option>
+                        <option value="7">7th Batch</option>
+                        <option value="8">8th Batch</option>
                       </select>
                     </div>
                   </div>
@@ -194,10 +194,15 @@ import { CommonModule } from '@angular/common';
                   {{ isLoading ? 'Creating Account...' : 'Create Account' }}
                 </button>
 
-                <div class="text-center">
+                <div class="text-center mt-2">
                   <p class="mb-0">
                     Already have an account?
-                    <a routerLink="/login" class="text-primary">Sign in here</a>
+                    <a
+                      routerLink="/login"
+                      class="text-primary"
+                      style="cursor: pointer;"
+                      >Sign in here</a
+                    >
                   </p>
                 </div>
               </form>

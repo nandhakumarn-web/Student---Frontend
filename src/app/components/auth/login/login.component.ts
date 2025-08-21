@@ -1,5 +1,10 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { AauthService } from '../../../services/auth.service';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -7,15 +12,19 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, FormsModule,CommonModule],
+  imports: [ReactiveFormsModule, FormsModule, CommonModule],
   standalone: true,
   template: `
     <div class="container-fluid vh-100">
       <div class="row h-100">
-        <div class="col-md-6 d-flex align-items-center justify-content-center bg-primary">
+        <div
+          class="col-md-6 d-flex align-items-center justify-content-center bg-primary"
+        >
           <div class="text-center text-white">
             <h1 class="display-4 mb-4">Welcome Back!</h1>
-            <p class="lead">Sign in to continue to Educational Management System</p>
+            <p class="lead">
+              Sign in to continue to Educational Management System
+            </p>
           </div>
         </div>
         <div class="col-md-6 d-flex align-items-center justify-content-center">
@@ -23,7 +32,7 @@ import { CommonModule } from '@angular/common';
             <div class="card shadow-lg border-0">
               <div class="card-body p-5">
                 <h2 class="card-title text-center mb-4">Login</h2>
-                
+
                 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
                   <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
@@ -32,8 +41,11 @@ import { CommonModule } from '@angular/common';
                       class="form-control"
                       id="email"
                       formControlName="email"
-                      [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
-                    >
+                      [class.is-invalid]="
+                        loginForm.get('email')?.invalid &&
+                        loginForm.get('email')?.touched
+                      "
+                    />
                     <div class="invalid-feedback">
                       Please provide a valid email.
                     </div>
@@ -46,11 +58,12 @@ import { CommonModule } from '@angular/common';
                       class="form-control"
                       id="password"
                       formControlName="password"
-                      [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
-                    >
-                    <div class="invalid-feedback">
-                      Password is required.
-                    </div>
+                      [class.is-invalid]="
+                        loginForm.get('password')?.invalid &&
+                        loginForm.get('password')?.touched
+                      "
+                    />
+                    <div class="invalid-feedback">Password is required.</div>
                   </div>
 
                   <div class="alert alert-danger" *ngIf="errorMessage">
@@ -62,13 +75,22 @@ import { CommonModule } from '@angular/common';
                     class="btn btn-primary w-100 mb-3"
                     [disabled]="loginForm.invalid || isLoading"
                   >
-                    <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                    <span
+                      *ngIf="isLoading"
+                      class="spinner-border spinner-border-sm me-2"
+                    ></span>
                     {{ isLoading ? 'Signing in...' : 'Sign In' }}
                   </button>
 
                   <div class="text-center">
-                    <p class="mb-0">Don't have an account? 
-                      <a routerLink="/register" class="text-primary">Sign up here</a>
+                    <p class="mb-0">
+                      Don't have an account?
+                      <a
+                        routerLink="/register"
+                        class="text-primary"
+                        style="cursor: pointer;"
+                        >Sign up here</a
+                      >
                     </p>
                   </div>
                 </form>
@@ -78,10 +100,9 @@ import { CommonModule } from '@angular/common';
         </div>
       </div>
     </div>
-  `
+  `,
 })
 export class LoginComponent {
-
   loginForm: FormGroup;
   isLoading = false;
   errorMessage = '';
@@ -93,7 +114,7 @@ export class LoginComponent {
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
+      password: ['', Validators.required],
     });
   }
 
@@ -115,7 +136,7 @@ export class LoginComponent {
           this.isLoading = false;
           this.errorMessage = 'Login failed. Please try again.';
           console.error('Login error:', error);
-        }
+        },
       });
     }
   }
