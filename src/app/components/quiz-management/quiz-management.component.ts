@@ -13,6 +13,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 @Component({
   selector: 'app-quiz-management',
   imports: [NavbarComponent, CommonModule, FormsModule, ReactiveFormsModule],
+  standalone: true, 
   template: `
     <app-navbar></app-navbar>
     

@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-quiz-take',
+  standalone: true,
   imports: [CommonModule,FormsModule],
  template: `
     <div class="container-fluid py-4" *ngIf="!loading">

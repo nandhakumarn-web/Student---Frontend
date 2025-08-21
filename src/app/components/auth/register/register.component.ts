@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-register',
+  standalone: true, 
   imports: [ReactiveFormsModule, FormsModule, CommonModule],
   template: `
     <div class="container-fluid py-5">

@@ -13,6 +13,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-feedback',
+  standalone: true, 
   imports: [NavbarComponent, CommonModule, FormsModule, ReactiveFormsModule],
   template: `
     <app-navbar></app-navbar>

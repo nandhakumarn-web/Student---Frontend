@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-quiz',
   imports: [NavbarComponent,CommonModule,FormsModule],
+  standalone: true, 
   template: `
     <app-navbar></app-navbar>
     

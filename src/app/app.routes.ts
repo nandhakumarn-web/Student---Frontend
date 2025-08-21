@@ -7,64 +7,86 @@ import { FeedbackComponent } from './components/feedback/feedback.component';
 import { QuizListComponent } from './components/quiz/quiz.component';
 import { QuizTakeComponent } from './components/quiz-take/quiz-take.component';
 import { QuizManagementComponent } from './components/quiz-management/quiz-management.component';
-import { MarkAttendanceComponent } from './components/mark-attendance/mark-attendance.component';
-import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role-guard.service';
 import { UserRole } from './models/user-role';
+import { AuthGuard } from './guards/auth.guard';
+import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 
 export const routes: Routes = [
+  // Root redirect
+  { 
+    path: '', 
+    redirectTo: '/dashboard', 
+    pathMatch: 'full' 
+  },
+  
   // Public routes
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
-  
-  // Protected routes
   { 
-    path: 'dashboard', 
-    component: DashboardComponent, 
-    canActivate: [AuthGuard] 
+    path: 'login', 
+    component: LoginComponent 
+  },
+  { 
+    path: 'register', 
+    component: RegisterComponent 
   },
   
-  // Student routes
-  { 
-    path: 'quiz', 
-    component: QuizListComponent, 
+  // Protected dashboard (handles role-based content internally)
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    canActivate: [AuthGuard]
+  },
+  
+  // Specific parameterized routes first
+  {
+    path: 'quiz/:id/take',
+    component: QuizTakeComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { role: UserRole.STUDENT }
   },
-  { 
-    path: 'quiz/:id/take', 
-    component: QuizTakeComponent, 
-    canActivate: [AuthGuard, RoleGuard],
-    data: { role: UserRole.STUDENT }
-  },
   
-  // Teacher/Admin routes
-  { 
-    path: 'quiz-management', 
-    component: QuizManagementComponent, 
-    canActivate: [AuthGuard, RoleGuard],
-    data: { role: UserRole.TEACHER }
-  },
-  { 
-    path: 'attendance/mark', 
-    component: MarkAttendanceComponent, 
+  // Specific nested routes
+  {
+    path: 'attendance/mark',
+    component: AttendanceComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { role: UserRole.TEACHER }
   },
   
-  // Common routes (all authenticated users)
-  { 
-    path: 'attendance', 
-    component: AttendanceComponent, 
-    canActivate: [AuthGuard] 
+  // General routes
+  {
+    path: 'quiz',
+    component: QuizListComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: UserRole.STUDENT }
   },
-  { 
-    path: 'feedback', 
-    component: FeedbackComponent, 
-    canActivate: [AuthGuard] 
+  {
+    path: 'quiz-management',
+    component: QuizManagementComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: UserRole.TEACHER }
+  },
+  {
+    path: 'attendance',
+    component: AttendanceComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'feedback',
+    component: FeedbackComponent,
+    canActivate: [AuthGuard]
   },
   
-  // Wildcard route
-  { path: '**', redirectTo: '/dashboard' }
+  // Error route for unauthorized access
+  {
+    path: 'unauthorized',
+    component: UnauthorizedComponent,
+   
+  },
+  
+  // Catch-all route
+  { 
+    path: '**', 
+    redirectTo: '/dashboard' 
+  }
 ];
