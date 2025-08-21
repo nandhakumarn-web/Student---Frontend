@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AauthService } from '../../../services/auth.service';
 import { UserRole } from '../../../models/user-role';
 import { CommonModule } from '@angular/common';
@@ -14,7 +14,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, CommonModule],
+  imports: [ReactiveFormsModule, FormsModule, CommonModule, RouterModule],
   template: `
     <div class="container-fluid py-5">
       <div class="row justify-content-center">
