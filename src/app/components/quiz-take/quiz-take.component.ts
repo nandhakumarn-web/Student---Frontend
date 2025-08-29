@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Question } from '../../models/question';
 import { interval, Subscription } from 'rxjs';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { QuizService } from '../../services/quiz.service';
 import { AauthService } from '../../services/auth.service';
 import { AnswerSubmission } from '../../models/answer-submission';
@@ -11,7 +11,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-quiz-take',
   standalone: true,
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule,FormsModule,RouterModule],
  template: `
     <div class="container-fluid py-4" *ngIf="!loading">
       <!-- Quiz Header -->

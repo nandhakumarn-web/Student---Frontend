@@ -2,14 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { Quiz } from '../../models/quiz';
 import { QuizService } from '../../services/quiz.service';
 import { AauthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { NavbarComponent } from "../navbar/navbar.component";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-quiz',
-  imports: [NavbarComponent,CommonModule,FormsModule],
+  imports: [NavbarComponent,CommonModule,FormsModule,RouterModule],
   standalone: true, 
   template: `
     <app-navbar></app-navbar>

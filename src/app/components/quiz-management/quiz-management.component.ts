@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Quiz } from '../../models/quiz';
 import { QuizAttempt } from '../../models/quiz-attempt';
 import { QuizService } from '../../services/quiz.service';
@@ -12,7 +12,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-quiz-management',
-  imports: [NavbarComponent, CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [NavbarComponent, CommonModule, FormsModule, ReactiveFormsModule,RouterModule],
   standalone: true, 
   template: `
     <app-navbar></app-navbar>

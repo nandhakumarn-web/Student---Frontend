@@ -8,10 +8,11 @@ import { NavbarComponent } from "../navbar/navbar.component";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AttendanceStats } from '../../models/attendance-stats';
+import { RouterModule, Router } from '@angular/router';
 
 @Component({
   selector: 'app-attendance',
-  imports: [NavbarComponent,CommonModule,FormsModule],
+  imports: [NavbarComponent,CommonModule,FormsModule, RouterModule],
 template: `
     <app-navbar></app-navbar>
     

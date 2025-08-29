@@ -19,46 +19,26 @@ export const routes: Routes = [
     redirectTo: '/dashboard', 
     pathMatch: 'full' 
   },
-  
+
   // Public routes
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
+
+  // Protected dashboard
   { 
-    path: 'login', 
-    component: LoginComponent 
-  },
-  { 
-    path: 'register', 
-    component: RegisterComponent 
-  },
-  
-  // Protected dashboard (handles role-based content internally)
-  {
     path: 'dashboard',
     component: DashboardComponent,
     canActivate: [AuthGuard]
   },
-  
-  // Specific parameterized routes first
-  {
-    path: 'quiz/:id/take',
-    component: QuizTakeComponent,
-    canActivate: [AuthGuard, RoleGuard],
-    data: { role: UserRole.STUDENT }
-  },
-  
-  // Specific nested routes
-  {
-    path: 'attendance/mark',
-    component: AttendanceComponent,
-    canActivate: [AuthGuard, RoleGuard],
-    data: { role: UserRole.TEACHER }
-  },
-  
-  // General routes
+
+  // Quiz routes (student + teacher split)
   {
     path: 'quiz',
-    component: QuizListComponent,
-    canActivate: [AuthGuard, RoleGuard],
-    data: { role: UserRole.STUDENT }
+    canActivate: [AuthGuard],
+    children: [
+      { path: '', component: QuizListComponent, canActivate: [RoleGuard], data: { role: UserRole.STUDENT } },
+      { path: ':id/take', component: QuizTakeComponent, canActivate: [RoleGuard], data: { role: UserRole.STUDENT } },
+    ]
   },
   {
     path: 'quiz-management',
@@ -66,27 +46,23 @@ export const routes: Routes = [
     canActivate: [AuthGuard, RoleGuard],
     data: { role: UserRole.TEACHER }
   },
+
+  // Attendance routes (organized as children to avoid duplicate component declarations)
   {
     path: 'attendance',
-    component: AttendanceComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
+    children: [
+      { path: '', component: AttendanceComponent },
+      { path: 'mark', component: AttendanceComponent, canActivate: [RoleGuard], data: { role: UserRole.TEACHER } }
+    ]
   },
-  {
-    path: 'feedback',
-    component: FeedbackComponent,
-    canActivate: [AuthGuard]
-  },
-  
-  // Error route for unauthorized access
-  {
-    path: 'unauthorized',
-    component: UnauthorizedComponent,
-   
-  },
-  
-  // Catch-all route
-  { 
-    path: '**', 
-    redirectTo: '/dashboard' 
-  }
+
+  // Feedback
+  { path: 'feedback', component: FeedbackComponent, canActivate: [AuthGuard] },
+
+  // Unauthorized page
+  { path: 'unauthorized', component: UnauthorizedComponent },
+
+  // Wildcard fallback
+  { path: '**', redirectTo: '/dashboard' }
 ];
