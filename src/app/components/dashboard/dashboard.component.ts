@@ -11,12 +11,13 @@ import { NavbarComponent } from '../navbar/navbar.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AttendanceStats } from '../../models/attendance-stats';
+import { Router, RouterModule } from '@angular/router';
 // Make sure there are no other imports from '../../models/attendance-status' for AttendanceStats in this file or related services.
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [NavbarComponent, CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [NavbarComponent, CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
   template: `
     <app-navbar></app-navbar>
 
